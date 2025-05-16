@@ -9,8 +9,8 @@ export default defineConfig({
   clean: true,
   minify: true,
   splitting: true,
-  // sourcemap: true,
   treeshake: true,
+  // sourcemap: true,
   esbuildOptions(options) {
     options.footer = {
       js: 'if (import.meta.main) Object.assign(globalThis, exports);',
