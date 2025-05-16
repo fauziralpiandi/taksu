@@ -1,7 +1,7 @@
 {
   "name": "taksu",
   "version": "1.0.0",
-  "description": "A controlled-entropy toolkit for modern developers.",
+  "description": "A controlled-entropy toolkit for modern JavaScript developers.",
   "keywords": [
     "random",
     "utility",

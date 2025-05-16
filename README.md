@@ -1,8 +1,8 @@
 # Taksu
 
-> A controlled-entropy toolkit for modern developers.
+> A controlled-entropy toolkit for modern JavaScript developers.
 
-**Taksu** is a library for generating random values. It's designed to be simple, performant, and type-safe.
+**Taksu** is a lightweight utility library providing essential random generation functions in a clean, namespaced API structure. It's designed to be simple, performant, and type-safe.
 
 ## 🚀 Quick Start
 
@@ -12,132 +12,99 @@ npm i taksu # or pnpm add taksu
 
 ```js
 // ESM
-import * as taksu from 'taksu';
+import { array, bool, color, id, number, uuid } from 'taksu';
 
 // CommonJS
-const taksu = require('taksu');
+const { array, bool, color, id, number, uuid } = require('taksu');
 ```
 
 ## 📊 API Reference
 
-### Type Definitions
+### Arrays
 
-For TypeScript users, these are the type definitions for the API:
-
-```ts
-// Number function types
-interface NumberOptions {
-  min?: number; // Minimum value (default: 0)
-  max?: number; // Maximum value (default: 1)
-  float?: boolean; // Generate floating point (default: false)
-}
-function number(options?: NumberOptions): number;
-
-// Boolean function types
-function bool(probability?: number): boolean; // probability default: 0.5
-
-// Array function types
-type SamplingOptions = {
-  allowDuplicates?: boolean; // Allow same item multiple times (default: false)
-};
-function pick<T>(array: readonly T[]): T;
-function shuffle<T>(array: readonly T[]): T[];
-function sample<T>(
-  array: readonly T[],
-  count: number,
-  options?: SamplingOptions,
-): T[];
-
-// ID generation types
-function id(length?: number): string; // length default: 12
-function uuid(): string; // Returns UUID v4 format
-
-// Color generation types
-function color(): string; // Returns hex color format (#RRGGBB)
-```
-
-### Numbers
-
-Generate random `number` with configurable ranges and types:
+Utilities for array randomization:
 
 ```ts
-import { number } from 'taksu';
+import { array } from 'taksu';
 
-// Random integer between 0 and 1 (inclusive)
-number();
+const items = [1, 2, 3, 4, 5];
 
-// Random integer between 1 and 10 (inclusive)
-number({ min: 1, max: 10 });
+// Pick a random item from array
+array.pick(items);
 
-// Random float between 0 and 1
-number({ float: true });
-
-// Random float between 1 and 10
-number({ min: 1, max: 10, float: true });
+// Shuffle array
+array.shuffle(items); // Returns new array
+array.shuffle(items, { inPlace: true }); // Modifies original array
 ```
 
 ### Booleans
 
-Generate `boolean` values with adjustable probabilities:
+Generate boolean values with adjustable probabilities:
 
 ```ts
 import { bool } from 'taksu';
 
 // Random boolean (50% chance of true)
-bool();
+bool.probability();
 
 // Random boolean with 80% chance of true
-bool(0.8);
+bool.probability(0.8);
+
+// Percentage-based chance
+bool.chance(75); // 75% chance of true
 ```
 
-### Arrays
+### Colors
 
-Utilities for `array` randomization:
+Generate random colors in various formats:
 
 ```ts
-import { pick, shuffle, sample } from 'taksu';
+import { color } from 'taksu';
 
-const array = [1, 2, 3, 4, 5];
+// Generate random HEX color
+color.hex(); // e.g. "#f7e03b"
 
-// Pick a random item from array
-pick(array);
-
-// Shuffle array (returns a new array)
-shuffle(array);
-
-// Get 3 random unique items from array
-sample(array, 3);
-
-// Get 10 random items from array with duplicates allowed
-sample(array, 10, { allowDuplicates: true });
+// Generate random RGB color
+color.rgb(); // e.g. "rgb(247, 224, 59)"
 ```
 
 ### Identifiers
 
-Generate random `ID` and `UUID`:
+Generate various types of random IDs:
 
 ```ts
 import { id, uuid } from 'taksu';
 
 // Generate random alphanumeric ID (12 characters by default)
-id();
+id.alphanumeric();
+id.alphanumeric(20); // Custom length
 
-// Generate random alphanumeric ID with custom length
-id(20);
+// Generate numeric-only ID
+id.numeric(8); // e.g., "12345678"
 
-// Generate random UUID v4
-uuid();
+// Generate UUIDs
+uuid.v4(); // Standard UUID v4
+uuid.simple(); // Simple UUID (no dashes)
 ```
 
-### Colors
+### Numbers
 
-Generate random `HEX` color values:
+Generate random numbers with flexible options:
 
 ```ts
-import { color } from 'taksu';
+import { number } from 'taksu';
 
-// Generate random hex color
-color(); // e.g. "#f7e03b"
+// Random integer between 0 and 100 (inclusive)
+number.integer();
+
+// Random integer between 1 and 10 (inclusive)
+number.integer(1, 10);
+
+// Random float between 0 and 1
+number.float();
+
+// Random float between 1 and 10
+number.float(1, 10);
 ```
 
 ## 🤝 Contributing
