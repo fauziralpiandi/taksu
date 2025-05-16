@@ -1,45 +1,39 @@
 import { describe, it, expect } from 'vitest';
-import { number } from '../number';
+import { number } from '../index';
 
 describe('number', () => {
-  it('generates numbers within specified ranges', () => {
-    const testRange = (
-      options: Parameters<typeof number>[0] = {},
-      iterations = 100,
-    ): void => {
-      const min = options.min ?? 0;
-      const max = options.max ?? 1;
-
-      for (let i = 0; i < iterations; i++) {
-        const result = number(options);
-        expect(result).toBeGreaterThanOrEqual(min);
-        expect(result).toBeLessThanOrEqual(max);
-      }
-    };
-
-    testRange();
-    testRange({ min: 10, max: 20 });
-    testRange({ min: -50, max: 50 });
-  });
-
-  it('handles integer and float generation correctly', () => {
+  it('generates integer values in specified range', () => {
     for (let i = 0; i < 50; i++) {
-      expect(Number.isInteger(number({ min: 1, max: 100 }))).toBe(true);
+      const result = number.integer(10, 20);
+      expect(result).toBeGreaterThanOrEqual(10);
+      expect(result).toBeLessThanOrEqual(20);
+      expect(Number.isInteger(result)).toBe(true);
     }
 
-    let hasFloat = false;
+    const defaultResult = number.integer();
+    expect(defaultResult).toBeGreaterThanOrEqual(0);
+    expect(defaultResult).toBeLessThanOrEqual(100);
+    expect(Number.isInteger(defaultResult)).toBe(true);
+    expect(() => number.integer(20, 10)).toThrow();
+  });
+
+  it('generates float values in specified range', () => {
     for (let i = 0; i < 50; i++) {
-      const result = number({ min: 1, max: 10, float: true });
+      const result = number.float(10, 20);
+      expect(result).toBeGreaterThanOrEqual(10);
+      expect(result).toBeLessThan(20); // < 20, not <= 20
+    }
+
+    let hasNonInteger = false;
+    for (let i = 0; i < 50; i++) {
+      const result = number.float(1, 100);
       if (result !== Math.floor(result)) {
-        hasFloat = true;
+        hasNonInteger = true;
         break;
       }
     }
-    expect(hasFloat).toBe(true);
-  });
 
-  it('validates input parameters', () => {
-    expect(() => number({ min: 10, max: 5 })).toThrow();
-    expect(() => number({ min: 0, max: 0 })).not.toThrow();
+    expect(hasNonInteger).toBe(true);
+    expect(() => number.float(20, 10)).toThrow();
   });
 });
