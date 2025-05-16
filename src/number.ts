@@ -1,13 +1,6 @@
-interface NumberOptions {
-  min?: number;
-  max?: number;
-  float?: boolean;
-}
+import { random } from './seed';
 
-export function number(options: NumberOptions = {}): number {
-  const min = options.min !== undefined ? options.min : 0;
-  const max = options.max !== undefined ? options.max : 1;
-
+function integer(min: number = 0, max: number = 100): number {
   if (isNaN(min) || isNaN(max)) {
     throw new Error('Min and max must be valid numbers');
   }
@@ -16,9 +9,26 @@ export function number(options: NumberOptions = {}): number {
     throw new Error('Min cannot be greater than max');
   }
 
-  if (options.float) {
-    return min + Math.random() * (max - min); // Range: [min, max)
+  if (!Number.isInteger(min) || !Number.isInteger(max)) {
+    throw new Error('Min and max must be integers');
   }
 
-  return Math.floor(min + Math.random() * (max - min + 1)); // Range: [min, max]
+  return Math.floor(min + random.next() * (max - min + 1)); // Range: [min, max]
 }
+
+function float(min: number = 0, max: number = 1): number {
+  if (isNaN(min) || isNaN(max)) {
+    throw new Error('Min and max must be valid numbers');
+  }
+
+  if (min > max) {
+    throw new Error('Min cannot be greater than max');
+  }
+
+  return min + random.next() * (max - min); // Range: [min, max)
+}
+
+export const number = {
+  integer,
+  float,
+};

@@ -1,4 +1,4 @@
-export { pick, shuffle, sample } from './array';
+export { array } from './array';
 export { bool } from './bool';
 export { color } from './color';
 export { id } from './id';

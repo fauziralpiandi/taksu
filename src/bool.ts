@@ -1,11 +1,30 @@
-export function bool(probability: number = 0.5): boolean {
-  if (isNaN(probability)) {
-    throw new Error('Probability must be a valid number');
+import { random } from './seed';
+
+function probability(value: number = 0.5): boolean {
+  if (isNaN(value)) {
+    throw new Error('Probability value must be a valid number');
   }
 
-  if (probability < 0 || probability > 1) {
-    throw new Error('Probability must be between 0 and 1');
+  if (value < 0 || value > 1) {
+    throw new Error('Probability value must be between 0 and 1');
   }
 
-  return Math.random() < probability; // True with P(probability), false with P(1-probability)
+  return random.next() < value; // True with P(value), false with P(1-value)
 }
+
+function chance(percentage: number): boolean {
+  if (isNaN(percentage)) {
+    throw new Error('Percentage must be a valid number');
+  }
+
+  if (percentage < 0 || percentage > 100) {
+    throw new Error('Percentage must be between 0 and 100');
+  }
+
+  return random.next() * 100 < percentage;
+}
+
+export const bool = {
+  probability,
+  chance,
+};
