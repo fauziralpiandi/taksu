@@ -18,9 +18,9 @@ describe('color', () => {
     const rgb = color.rgb();
     expect(typeof rgb).toBe('string');
     expect(rgb).toMatch(/^rgb\(\d{1,3}, \d{1,3}, \d{1,3}\)$/);
-    
+
     const match = rgb.match(/rgb\((\d+), (\d+), (\d+)\)/);
-    
+
     if (match) {
       const r = parseInt(match[1], 10);
       const g = parseInt(match[2], 10);
