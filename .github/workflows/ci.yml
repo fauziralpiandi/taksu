@@ -2,12 +2,19 @@ name: CI
 
 on:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 jobs:
-  check:
-    name: Is this PR ready to be merged?
+  ci-check:
+    name: Check PR with Node.js ${{ matrix.node-version }}
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [18, 20, 22]
 
@@ -19,26 +26,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node-version }}-
-            ${{ runner.os }}-node-
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Format
+      - name: Check format
         run: npm run format:check
 
-      - name: Lint
+      - name: Lint code
         run: npm run lint
 
-      - name: Test
-        run: npm test
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build package
+        run: npm run build
+
+      - name: Coverage report
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.node-version }}
+          path: coverage/lcov.info
