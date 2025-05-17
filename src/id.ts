@@ -1,4 +1,4 @@
-import { random } from './seed';
+import { entropy } from './entropy';
 
 function alphanumeric(length: number = 12): string {
   if (isNaN(length) || !Number.isInteger(length)) {
@@ -17,7 +17,7 @@ function alphanumeric(length: number = 12): string {
   let result = '';
 
   for (let i = 0; i < length; i++) {
-    result += characters.charAt((random.next() * charLength) | 0);
+    result += characters.charAt((entropy.get() * charLength) | 0);
   }
 
   return result;
@@ -37,7 +37,7 @@ function numeric(length: number = 12): string {
   let result = '';
 
   for (let i = 0; i < length; i++) {
-    result += characters.charAt((random.next() * charLength) | 0);
+    result += characters.charAt((entropy.get() * charLength) | 0);
   }
 
   return result;
