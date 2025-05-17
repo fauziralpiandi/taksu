@@ -6,6 +6,7 @@ describe('id', () => {
     const testId = id.alphanumeric(20);
     expect(testId.length).toBe(20);
     expect(testId).toMatch(/^[A-Za-z0-9]+$/);
+    // Default is 12 chars
     expect(id.alphanumeric().length).toBe(12);
   });
 
@@ -20,12 +21,14 @@ describe('id', () => {
       ids.add(id.alphanumeric(8));
     }
 
+    // No collisions even with short IDs
     expect(ids.size).toBe(100);
   });
 
   it('generates numeric-only strings', () => {
     const testId = id.numeric(10);
     expect(testId.length).toBe(10);
+    // Digits only
     expect(testId).toMatch(/^[0-9]+$/);
     expect(testId).not.toMatch(/[A-Za-z]/);
     expect(id.numeric().length).toBe(12);

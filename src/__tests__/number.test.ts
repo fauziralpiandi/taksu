@@ -24,6 +24,7 @@ describe('number', () => {
       expect(result).toBeLessThan(20); // < 20, not <= 20
     }
 
+    // Check for fractional values
     let hasNonInteger = false;
     for (let i = 0; i < 50; i++) {
       const result = number.float(1, 100);
@@ -34,6 +35,7 @@ describe('number', () => {
     }
 
     expect(hasNonInteger).toBe(true);
+    // Inverted ranges should fail fast like integers
     expect(() => number.float(20, 10)).toThrow();
   });
 });

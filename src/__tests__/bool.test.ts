@@ -14,6 +14,7 @@ describe('bool', () => {
       }
 
       const ratio = trueCount / iterations;
+      // Allow statistical variance within reason
       const tolerance = 0.1;
       expect(ratio).toBeGreaterThan(value - tolerance);
       expect(ratio).toBeLessThan(value + tolerance);
@@ -27,6 +28,7 @@ describe('bool', () => {
   it('validates probability range', () => {
     expect(() => bool.probability(-0.1)).toThrow();
     expect(() => bool.probability(1.1)).toThrow();
+    // Include exact boundaries
     expect(() => bool.probability(0)).not.toThrow();
     expect(() => bool.probability(1)).not.toThrow();
   });
@@ -41,8 +43,10 @@ describe('bool', () => {
     }
 
     const ratio = trueCount / iterations;
+    // ~30% chance
     expect(ratio).toBeGreaterThan(0.2);
     expect(ratio).toBeLessThan(0.4);
+
     expect(() => bool.chance(-10)).toThrow();
     expect(() => bool.chance(110)).toThrow();
   });

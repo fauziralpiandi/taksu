@@ -27,6 +27,7 @@ describe('uuid', () => {
 
   it('simple method produces valid simplified UUID format', () => {
     const result = uuid.simple();
+    // 32 hex characters = 128 bits of entropy
     expect(result.length).toBe(32);
     expect(result).toMatch(/^[0-9a-f]{32}$/i);
     expect(result).not.toContain('-');

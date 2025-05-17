@@ -6,6 +6,7 @@ describe('array utilities', () => {
     it('returns an item from the array and throws on empty', () => {
       const testArray = [1, 2, 3, 4, 5];
       expect(testArray).toContain(array.pick(testArray));
+      // Fail fast on impossibility
       expect(() => array.pick([])).toThrow();
     });
   });
@@ -14,6 +15,7 @@ describe('array utilities', () => {
     it('returns a new array with same elements in different order', () => {
       const testArray = [1, 2, 3, 4, 5];
       const result = array.shuffle(testArray);
+      // Non-destructive operation
       expect(result).not.toBe(testArray);
       expect(result.sort()).toEqual(testArray.sort());
       expect(array.shuffle([])).toEqual([]);
