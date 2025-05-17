@@ -23,8 +23,9 @@ describe('performance', () => {
     }
     const randomTime = performance.now() - randomStart;
 
-    // Acceptable performance trade-off
-    const maxSlowerFactor = 3;
+    // Acceptable performance trade-off,
+    // with margin for environmental variations
+    const maxSlowerFactor = 2.2;
     expect(entropyTime).toBeLessThan(randomTime * maxSlowerFactor);
 
     console.log(`entropy.get(): ${entropyTime.toFixed(2)}ms`);

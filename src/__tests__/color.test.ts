@@ -36,6 +36,7 @@ describe('color', () => {
       expect(b).toBeGreaterThanOrEqual(0);
       expect(b).toBeLessThanOrEqual(255);
     } else {
+      // This should never happen
       expect(match).not.toBeNull();
     }
   });
