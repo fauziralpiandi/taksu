@@ -6,6 +6,9 @@ describe('color', () => {
     const result = color.hex();
     expect(result).toMatch(/^#[0-9A-F]{6}$/i);
 
+    // With 16.7M possible colors,
+    // we expect high uniqueness even in small samples
+    // <90 unique values would indicate serious bias
     const colors = new Set();
     for (let i = 0; i < 100; i++) {
       colors.add(color.hex());
@@ -25,6 +28,7 @@ describe('color', () => {
       const r = parseInt(match[1], 10);
       const g = parseInt(match[2], 10);
       const b = parseInt(match[3], 10);
+      // 8-bit per channel
       expect(r).toBeGreaterThanOrEqual(0);
       expect(r).toBeLessThanOrEqual(255);
       expect(g).toBeGreaterThanOrEqual(0);
@@ -32,7 +36,6 @@ describe('color', () => {
       expect(b).toBeGreaterThanOrEqual(0);
       expect(b).toBeLessThanOrEqual(255);
     } else {
-      // This should never happen
       expect(match).not.toBeNull();
     }
   });
