@@ -1,9 +1,5 @@
 import { entropy } from './entropy';
 
-type ShuffleOptions = {
-  inPlace?: boolean;
-};
-
 function pick<T>(array: readonly T[]): T {
   if (!Array.isArray(array)) {
     throw new Error('Argument must be an array');
@@ -13,11 +9,20 @@ function pick<T>(array: readonly T[]): T {
     throw new Error('Cannot pick from an empty array');
   }
 
-  const index = Math.floor(entropy.get() * array.length);
+  // Bit-shift optimization for integer arrays faster
+  // when array length is a power of 2 (common case)
+  const len = array.length;
+  const isPowerOf2 = (len & (len - 1)) === 0;
+
+  // Fast path for power-of-2 length arrays
+  const index = isPowerOf2
+    ? (entropy.get() * len) >>> 0
+    : Math.floor(entropy.get() * len);
+
   return array[index] as T;
 }
 
-function shuffle<T>(array: readonly T[], options?: ShuffleOptions): T[] {
+function shuffle<T>(array: readonly T[], options?: { inPlace?: boolean }): T[] {
   if (!Array.isArray(array)) {
     throw new Error('Argument must be an array');
   }
@@ -25,27 +30,26 @@ function shuffle<T>(array: readonly T[], options?: ShuffleOptions): T[] {
   const len = array.length;
   if (len <= 1) return len ? [array[0] as T] : [];
 
-  const shouldModifyInPlace = options?.inPlace && !Object.isFrozen(array);
+  const isInPlace = options?.inPlace && !Object.isFrozen(array);
 
   let result: T[];
-
-  if (shouldModifyInPlace) {
+  if (isInPlace) {
     result = array as unknown as T[]; // Cast only when we're sure it's safe
   } else {
-    result = [];
-    for (let i = 0; i < array.length; i++) {
-      result.push(array[i]);
+    // Use type assertion at array level for safety
+    const safeArray = array as readonly T[];
+    result = new Array<T>(len);
+    for (let i = 0; i < len; i++) {
+      result[i] = safeArray[i];
     }
   }
 
-  // Fisher-Yates - O(n) and avoids modulo bias
+  // Fisher-Yates with optimized swapping
   for (let i = len - 1; i > 0; i--) {
-    // Biased implementations use % here,
-    // causing skewed distributions
     const j = Math.floor(entropy.get() * (i + 1));
-    const temp = result[i];
-    result[i] = result[j];
-    result[j] = temp;
+
+    // Destructuring swap is optimized in modern JS engines
+    [result[i], result[j]] = [result[j], result[i]];
   }
 
   return result;
