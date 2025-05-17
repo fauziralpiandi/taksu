@@ -1,4 +1,4 @@
-import { random } from './seed';
+import { entropy } from './entropy';
 
 type ShuffleOptions = {
   inPlace?: boolean;
@@ -13,7 +13,7 @@ function pick<T>(array: readonly T[]): T {
     throw new Error('Cannot pick from an empty array');
   }
 
-  const index = Math.floor(random.next() * array.length);
+  const index = Math.floor(entropy.get() * array.length);
   return array[index] as T;
 }
 
@@ -40,7 +40,9 @@ function shuffle<T>(array: readonly T[], options?: ShuffleOptions): T[] {
 
   // Fisher-Yates - O(n) and avoids modulo bias
   for (let i = len - 1; i > 0; i--) {
-    const j = Math.floor(random.next() * (i + 1));
+    // Biased implementations use % here,
+    // causing skewed distributions
+    const j = Math.floor(entropy.get() * (i + 1));
     const temp = result[i];
     result[i] = result[j];
     result[j] = temp;

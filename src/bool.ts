@@ -1,4 +1,4 @@
-import { random } from './seed';
+import { entropy } from './entropy';
 
 function probability(value: number = 0.5): boolean {
   if (isNaN(value)) {
@@ -9,7 +9,7 @@ function probability(value: number = 0.5): boolean {
     throw new Error('Probability value must be between 0 and 1');
   }
 
-  return random.next() < value; // True with P(value), false with P(1-value)
+  return entropy.get() < value; // True with P(value), false with P(1-value)
 }
 
 function chance(percentage: number): boolean {
@@ -21,7 +21,7 @@ function chance(percentage: number): boolean {
     throw new Error('Percentage must be between 0 and 100');
   }
 
-  return random.next() * 100 < percentage;
+  return entropy.get() * 100 < percentage;
 }
 
 export const bool = {

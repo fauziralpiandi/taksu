@@ -1,4 +1,4 @@
-import { random } from './seed';
+import { entropy } from './entropy';
 
 function integer(min: number = 0, max: number = 100): number {
   if (isNaN(min) || isNaN(max)) {
@@ -13,7 +13,9 @@ function integer(min: number = 0, max: number = 100): number {
     throw new Error('Min and max must be integers');
   }
 
-  return Math.floor(min + random.next() * (max - min + 1)); // Range: [min, max]
+  // +1 ensures inclusive upper bound,
+  // avoiding common off-by-one errors
+  return Math.floor(min + entropy.get() * (max - min + 1)); // Range: [min, max]
 }
 
 function float(min: number = 0, max: number = 1): number {
@@ -25,7 +27,7 @@ function float(min: number = 0, max: number = 1): number {
     throw new Error('Min cannot be greater than max');
   }
 
-  return min + random.next() * (max - min); // Range: [min, max)
+  return min + entropy.get() * (max - min); // Range: [min, max)
 }
 
 export const number = {
