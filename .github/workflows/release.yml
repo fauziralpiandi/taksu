@@ -14,7 +14,7 @@ on:
 
 jobs:
   release:
-    name: Release
+    name: New release
     runs-on: ubuntu-latest
 
     steps:
@@ -60,7 +60,7 @@ jobs:
           esac
           
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          npm version $NEW_VERSION --no-git-tag-version
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
           echo "new_version=v$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Generate changelog
@@ -68,37 +68,17 @@ jobs:
         run: |
           PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -z "$PREV_TAG" ]; then PREV_TAG=$(git rev-list --max-parents=0 HEAD); fi
-          
+
           REPO="${{ github.repository }}"
+          CHANGES=$(git log --pretty=format:"* %s [<code>%h</code>](https://github.com/$REPO/commit/%H)" $PREV_TAG..HEAD)
 
-          ALL_CHANGES=$(git log --pretty=format:"* %s [<code>%h</code>](https://github.com/$REPO/commit/%H)" $PREV_TAG..HEAD)
-          CORE_CHANGES=$(echo "$ALL_CHANGES" | grep -E "^\* (feat:|fix:|perf:|refactor:|test:|build:)" || echo "")
-          DOC_CHANGES=$(echo "$ALL_CHANGES" | grep -E "^\* (docs:|example:)" || echo "")
-          MISC_CHANGES=$(echo "$ALL_CHANGES" | grep -v -E "^\* (feat:|fix:|perf:|refactor:|test:|build:|docs:|example:)" || echo "")
-          
           {
-            if [ -n "$CORE_CHANGES" ]; then
-              echo "### Core Changes"
-              echo "$CORE_CHANGES"
-              echo ""
-            fi
-            
-            if [ -n "$DOC_CHANGES" ]; then
-              echo "### Documentation"
-              echo "$DOC_CHANGES"
-              echo ""
-            fi
-            
-            if [ -n "$MISC_CHANGES" ]; then
-              echo "### Misc Changes"
-              echo "$MISC_CHANGES"
-              echo ""
-            fi
-
+            echo "### What's Changed?"
+            echo "$CHANGES"
             echo ""
             echo "> https://github.com/$REPO/compare/$PREV_TAG...${{ steps.bump.outputs.new_version }}"
           } > CHANGELOG.md
-          
+
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           cat CHANGELOG.md >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -131,6 +111,7 @@ jobs:
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
       - name: Publish to NPM
+        if: github.ref == 'refs/heads/main'
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
