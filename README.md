@@ -12,10 +12,10 @@ npm i taksu # or pnpm add taksu
 
 ```js
 // ESM
-import { array, bool, color, id, number, uuid } from 'taksu';
+import { array, bool, color, id, number, string, uuid } from 'taksu';
 
 // CommonJS
-const { array, bool, color, id, number, uuid } = require('taksu');
+const { array, bool, color, id, number, string, uuid } = require('taksu');
 ```
 
 ### Arrays
@@ -103,6 +103,26 @@ number.float();
 
 // Random float between 1 and 10 (exclusive upper bound)
 number.float(1, 10);
+```
+
+### Strings
+
+Generate `string` values with precise entropy control:
+
+```ts
+import { string } from 'taksu';
+
+// Flexible entropy sources with 62-symbol space (~5.95 bits/char)
+string.random(); // 8 chars by default
+string.random(16, 'ACGT'); // Custom charset for DNA, etc.
+
+// Configurable character class constraints
+string.alphanumeric(12); // 12 chars mixed case + digits
+string.alphanumeric(10, { uppercase: true, numbers: true }); // A-Z + digits only
+
+// Format-preserving entropy for structured identifiers
+string.pattern('###-??-**'); // Where # = digit, ? = letter, * = alphanumeric
+string.pattern('Order-####-AA'); // Structured order codes (e.g., "Order-7391-XB")
 ```
 
 Uses a carefully tuned `xorshift128+` implementation for HQ entropy:
