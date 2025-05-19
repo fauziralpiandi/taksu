@@ -109,16 +109,9 @@ jobs:
       - name: Setup .npmrc
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
-      - name: Debug NPM
-        run: |
-          npm whoami
-          npm config get registry
-          node -p "require('./package.json').name"
-          node -p "require('./package.json').version"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Publish to NPM
-        run: npm publish --access public
+        run: |
+             npm config get registry
+             npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
